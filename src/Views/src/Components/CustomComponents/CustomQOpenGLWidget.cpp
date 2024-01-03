@@ -1,0 +1,268 @@
+
+#include <Services/OpenGL/Shaders/ShadersStrings.h>
+#include <Services/SceneFileData.h>
+#include <Views/Components/CustomComponents/CustomQOpenGLWidget.h>
+
+#include <QApplication>
+#include <QFile>
+#include <QFontDatabase>
+#include <QStyle>
+#include <QVector3D>
+#include <QWidget>
+
+CustomQOpenGLWidget::CustomQOpenGLWidget(QWidget *parent)
+    : QOpenGLWidget(parent) {
+  setAttribute(Qt::WA_TranslucentBackground);
+  view_.lookAt(QVector3D(1.5, 1.5, 1.5), QVector3D(0, 0, 0),
+               QVector3D(0, 1, 0));
+  setProjection();
+}
+
+void CustomQOpenGLWidget::initializeGL() {
+  initializeOpenGLFunctions();
+  LoadShaders();
+  glEnable(GL_CULL_FACE);
+  glClearColor(settings_.floorSettings_.color.r,
+               settings_.floorSettings_.color.g,
+               settings_.floorSettings_.color.b, 1.0f);
+  glEnable(GL_DEPTH_TEST);
+}
+
+void CustomQOpenGLWidget::resizeGL(int width, int height) {
+  QOpenGLWidget::resizeGL(width, height);
+  auto aspect = width / (float)height;
+  setProjection();
+}
+
+void CustomQOpenGLWidget::paintGL() {
+  if (currentObject == nullptr) return;
+
+  glClearColor(settings_.floorSettings_.color.r,
+               settings_.floorSettings_.color.g,
+               settings_.floorSettings_.color.b, 1.0f);
+
+  setProjection();
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  if (settings_.vertexSettings_.type != models::VertexDisplayType::NONE) {
+    drawVertex(*currentObject);
+  }
+  if (settings_.edgeSettings_.type == models::EdgeDisplayType::DOTTED) {
+    drawDottedEdges(*currentObject);
+  } else {
+    drawEdges(*currentObject);
+  }
+  drawFaces(*currentObject);
+
+  // static float time = 0;
+  // time = (time < 1) ? time + 0.01f : time - 1;
+  // glClearColor(time, time, time, 1.0f);
+}
+
+static QVector4D color_from_settings(const dto::Color &color) {
+  return QVector4D(color.r, color.g, color.b, color.a);
+}
+
+const QString SHADER_ERROR("ShaderCompilationError: ");
+
+void CustomQOpenGLWidget::AddShader(QOpenGLShaderProgram &program,
+                                    QOpenGLShader::ShaderTypeBit type,
+                                    const QString &shaderPath) {
+  if (!program.addShaderFromSourceFile(type, shaderPath)) {
+    throw std::runtime_error((SHADER_ERROR + shaderPath).toStdString());
+  }
+}
+
+void CustomQOpenGLWidget::AddShaderFromString(QOpenGLShaderProgram &program,
+                                              QOpenGLShader::ShaderTypeBit type,
+                                              const QString &shader) {
+  if (!program.addShaderFromSourceCode(type, shader)) {
+    throw std::runtime_error((SHADER_ERROR + shader).toStdString());
+  }
+}
+
+void CustomQOpenGLWidget::AddShader(QOpenGLShaderProgram &program,
+                                    const QString &vertexShader,
+                                    const QString &fragmentShader) {
+  AddShaderFromString(program, QOpenGLShader::Vertex, vertexShader);
+  AddShaderFromString(program, QOpenGLShader::Fragment, fragmentShader);
+  // AddShader(program, QOpenGLShader::Vertex, vertexShader);
+  // AddShader(program, QOpenGLShader::Fragment, fragmentShader);
+  program.link();
+}
+
+void CustomQOpenGLWidget::AddShader(QOpenGLShaderProgram &program,
+                                    const QString &vertex, const QString &geom,
+                                    const QString &frag) {
+  AddShaderFromString(program, QOpenGLShader::Vertex, vertex);
+  AddShaderFromString(program, QOpenGLShader::Geometry, geom);
+  AddShaderFromString(program, QOpenGLShader::Fragment, frag);
+  // AddShader(program, QOpenGLShader::Vertex, vertex);
+  // AddShader(program, QOpenGLShader::Geometry, geom);
+  // AddShader(program, QOpenGLShader::Fragment, frag);
+  program.link();
+}
+
+void CustomQOpenGLWidget::LoadShaders() {
+  AddShader(edgeProgram_, EdgeVertShader, EdgeGeomShader, EdgeFragShader);
+  AddShader(dottedEdgesProgram_, EdgesDottedVertShader, EdgesDottedFragShader);
+  AddShader(faceProgram_, FaceVertShader, FaceFragShader);
+  AddShader(faceWithTextureProgram_, FaceWithTextureVertShader,
+            FaceWithTextureFragShader);
+  AddShader(skyBoxProgram_, SkyBoxVertShader, SkyBoxFragShader);
+  AddShader(vertexProgram_, VertexVertShader, VertexGeomShader,
+            VertexFragShader);
+
+  // AddShader(edgeProgram_, EDGE_VERT_SHADER, EDGE_GEOM_SHADER,
+  // EDGE_FRAG_SHADER); AddShader(dottedEdgesProgram_, EDGES_DOTTED_VERT_SHADER,
+  //           EDGES_DOTTED_FRAG_SHADER);
+  // AddShader(faceProgram_, FACE_VERT_SHADER, FACE_FRAG_SHADER);
+  // AddShader(faceWithTextureProgram_, FACE_WITH_TEXTURE_VERT_SHADER,
+  //           FACE_WITH_TEXTURE_FRAG_SHADER);
+  // AddShader(skyBoxProgram_, SKY_BOX_VERT_SHADER, SKY_BOX_FRAG_SHADER);
+  // AddShader(vertexProgram_, VERTEX_VERT_SHADER, VERTEX_GEOM_SHADER,
+  //           VERTEX_FRAG_SHADER);
+}
+void CustomQOpenGLWidget::setProjection() {
+  if (settings_.displayType_.projectionType ==
+      models::ProjectionType::PARALLEL) {
+    projection_.setToIdentity();
+  } else {
+    projection_.perspective(90, 16.f / 9.f, 0.1f, 100.0f);
+  }
+}
+void CustomQOpenGLWidget::setAttributesWithoutTexture(ShaderProgram &program) {
+  int vertLoc = program.attributeLocation("position");
+  program.enableAttributeArray(vertLoc);
+  program.setAttributeBuffer(vertLoc, GL_FLOAT, 0, 3, sizeof(QVector3D));
+}
+void CustomQOpenGLWidget::setMVP(ShaderProgram &program, Object &obj) {
+  program.setUniformValue("model", obj.getModelMatrix()._matrix);
+  program.setUniformValue("view", view_);
+  program.setUniformValue("projection", projection_);
+}
+
+void CustomQOpenGLWidget::drawFaces(Object &obj) {
+  obj.indexBuffer.bind();
+  obj.vertexBuffer.bind();
+
+  faceProgram_.bind();
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+  setMVP(faceProgram_, obj);
+  setAttributesWithoutTexture(faceProgram_);
+  faceProgram_.setUniformValue("PointColor", QVector4D(0.0f, 0.f, 1.f, 1.0f));
+
+  glDrawElements(GL_TRIANGLES, obj.indexBuffer.size(), GL_UNSIGNED_INT, 0);
+
+  faceProgram_.release();
+  obj.vertexBuffer.release();
+  obj.indexBuffer.release();
+}
+void CustomQOpenGLWidget::drawEdges(Object &obj) {
+  obj.indexBuffer.bind();
+  obj.vertexBuffer.bind();
+
+  edgeProgram_.bind();
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+  setAttributesWithoutTexture(edgeProgram_);
+  setMVP(edgeProgram_, obj);
+
+  edgeProgram_.setUniformValue(
+      "PointColor", color_from_settings(settings_.edgeSettings_.color));
+  edgeProgram_.setUniformValue("ViewportInvSize", resolution_);
+  edgeProgram_.setUniformValue("Thickness", settings_.edgeSettings_.pointSize);
+
+  glDrawElements(GL_TRIANGLES, obj.indexBuffer.size(), GL_UNSIGNED_INT, 0);
+
+  edgeProgram_.release();
+
+  obj.vertexBuffer.release();
+  obj.indexBuffer.release();
+}
+void CustomQOpenGLWidget::drawDottedEdges(Object &obj) {
+  obj.indexBuffer.bind();
+  obj.vertexBuffer.bind();
+
+  dottedEdgesProgram_.bind();
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+  setAttributesWithoutTexture(dottedEdgesProgram_);
+  setMVP(dottedEdgesProgram_, obj);
+
+  dottedEdgesProgram_.setUniformValue(
+      "PointColor", color_from_settings(settings_.edgeSettings_.color));
+
+  dottedEdgesProgram_.setUniformValue("Resolution", resolution_);
+  dottedEdgesProgram_.setUniformValue("DashSize", 5.f);
+  dottedEdgesProgram_.setUniformValue("GapSize", 25.f);
+
+  glDrawElements(GL_TRIANGLES, obj.indexBuffer.size(), GL_UNSIGNED_INT, 0);
+
+  dottedEdgesProgram_.release();
+
+  obj.vertexBuffer.release();
+  obj.indexBuffer.release();
+}
+void CustomQOpenGLWidget::drawVertex(Object &obj) {
+  vertexProgram_.bind();
+  obj.indexBuffer.bind();
+  obj.vertexBuffer.bind();
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+
+  setMVP(vertexProgram_, obj);
+  setAttributesWithoutTexture(vertexProgram_);
+
+  vertexProgram_.setUniformValue(
+      "PointColor", color_from_settings(settings_.vertexSettings_.color));
+
+  vertexProgram_.setUniformValue("PointSize",
+                                 settings_.vertexSettings_.pointSize);
+  vertexProgram_.setUniformValue(
+      "RoundPoint",
+      settings_.vertexSettings_.type == models::VertexDisplayType::CIRCLE);
+
+  glDrawElements(GL_POINTS, obj.indexBuffer.size(), GL_INT, 0);
+
+  obj.vertexBuffer.release();
+  obj.indexBuffer.release();
+  vertexProgram_.release();
+}
+
+std::shared_ptr<models::ISceneDrawer> CustomQOpenGLWidget::getShared() {
+  return std::shared_ptr<models::ISceneDrawer>(this);
+}
+
+void CustomQOpenGLWidget::draw(models::TransformableObject &obj) {
+  currentObject = &(Object &)obj;
+  paintGL();
+  update();
+
+  // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  // glEnable(GL_DEPTH_TEST);
+
+  // glEnable(GL_BLEND);
+  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  // auto glObj = (Object &)obj;
+  // drawVertex(glObj);
+  // if (settings_.edgeSettings_.type == models::EdgeDisplayType::DOTTED) {
+  //   drawDottedEdges(glObj);
+  // } else {
+  //   drawEdges(glObj);
+  // }
+  // drawFaces(glObj);
+}
+
+// void CustomQOpenGLWidget::setAttributesWithoutTexture(ShaderProgram &program)
+// {
+//   int vertLoc = program.attributeLocation("position");
+//   program.enableAttributeArray(vertLoc);
+//   program.setAttributeArray(vertLoc, GL_FLOAT, 0, 3, sizeof(QVector3D));
+// };

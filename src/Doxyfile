@@ -1,0 +1,9 @@
+PROJECT_NAME           = "3DViewer v.1.0"
+USE_MDFILE_AS_MAINPAGE = YES
+MAIN_PAGE              = mainpage.md
+OUTPUT_DIRECTORY       = ./doc
+INPUT                  = mainpage.md .
+RECURSIVE              = YES
+FILE_PATTERNS          = *.c *.cpp *.h
+
+

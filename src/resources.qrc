@@ -1,0 +1,35 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Views/resources/Fonts/NATS-Regular.ttf</file>
+        <file>Views/resources/Fonts/NicoMoji-Regular.ttf</file>
+        <file>Views/resources/Style/style.qss</file>
+        <file>Views/resources/StandardModels/Sphere.png</file>
+        <file>Views/resources/StandardModels/Cylinder.png</file>
+        <file>Views/resources/StandardModels/Cone.png</file>
+        <file>Views/resources/StandardModels/Cube.png</file>
+        <file>Views/resources/StandardModels/Pyramid.png</file>
+        <file>Views/resources/Icons/icon.icns</file>
+        <file>Views/resources/Icons/icon.ico</file>
+        <file>Views/resources/Icons/icon.png</file>
+        <file>Services/resources/Shaders/flat_shading_faces/frag.glsl</file>
+        <file>Services/resources/Shaders/flat_shading_faces/vert.glsl</file>
+        <file>Services/resources/Shaders/skybox/frag.glsl</file>
+        <file>Services/resources/Shaders/skybox/vert.glsl</file>
+        <file>Services/resources/Shaders/faces_with_textures/frag.glsl</file>
+        <file>Services/resources/Shaders/faces_with_textures/vert.glsl</file>
+        <file>Services/resources/Shaders/vertexes/geom.glsl</file>
+        <file>Services/resources/Shaders/vertexes/frag.glsl</file>
+        <file>Services/resources/Shaders/vertexes/vert.glsl</file>
+        <file>Services/resources/Shaders/edges_dotted_2/geom.glsl</file>
+        <file>Services/resources/Shaders/edges_dotted_2/frag.glsl</file>
+        <file>Services/resources/Shaders/edges_dotted_2/vert.glsl</file>
+        <file>Services/resources/Shaders/edges/geom.glsl</file>
+        <file>Services/resources/Shaders/edges/frag.glsl</file>
+        <file>Services/resources/Shaders/edges/vert.glsl</file>
+        <file>Services/resources/Shaders/pbr/vert.glsl</file>
+        <file>Services/resources/Shaders/edges_dotted/frag.glsl</file>
+        <file>Services/resources/Shaders/edges_dotted/vert.glsl</file>
+        <file>Services/resources/Shaders/faces/frag.glsl</file>
+        <file>Services/resources/Shaders/faces/vert.glsl</file>
+    </qresource>
+</RCC>

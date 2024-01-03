@@ -1,0 +1,149 @@
+#app_background {
+    background-color: black;
+}
+
+#main_widget_background, #control_widget_background {
+    background-color: rgb(28,28,30);
+    border-radius: 20;
+}
+#menu_header_background {
+    background-color: rgb(34,34,37);
+    border-top-left-radius: 20;
+    border-top-right-radius: 20;
+}
+#menu_widget_background {
+    background-color: rgb(28,28,30);
+    border: 2px solid rgb(30, 30, 32);
+    border-bottom-left-radius: 20;
+    border-bottom-right-radius: 20;
+}    
+
+#stacked_widget #title {
+    color: rgb(217, 217, 217);
+    font-size: 50px;
+}
+
+#stacked_widget_button {
+    background-color: transparent;
+    border-style: outset;
+    font-family: "Nico Moji";
+    color: rgb(122,122,122);
+    font-size: 36px;
+}
+#stacked_widget_button:hover {
+    color: rgb(147,147,147);
+}
+#stacked_widget_button:pressed {
+    color: rgb(173,173,173);
+}
+
+#switch_menu_background {
+    background-color: rgb(16,16,16);
+    border: 2px solid rgb(30, 30, 32);
+    border-radius: 15;
+}
+#switch_menu_selected_item_background {
+    background-color: rgb(58, 58, 60);
+    border: none;
+    border-radius: 10;
+}
+#switch_menu_item {
+    font-size: 20px;
+    background-color: transparent;
+    border-style: outset;
+}
+#switch_menu_item[status="inactive"] {
+    color: rgb(173, 173, 173);
+}
+
+#switch_menu_item[status="active"], #switch_menu_item[status="inactive"]:hover {
+    color: rgb(217, 217, 217);
+}
+#custom_button {
+    background-color: rgb(58, 58, 60);
+    color: rgba(173, 173, 173, 255);
+    border-radius: 13;
+    font-size: 25px;
+    border: 2px solid rgb(30, 30, 32);
+}
+#custom_button:hover {
+    color: rgb(225, 225, 225);
+}
+#custom_button:pressed {
+    border: 3px solid rgb(30, 30, 32);
+    background-color: rgb(60, 60, 62);
+}
+
+#stacked_widget, #stacked_widget_item, #scroll_widget, #scroll_widget_item {
+    background-color: transparent;
+    border-style: outset;
+    border: none;
+    border-bottom-left-radius: 20;
+    border-bottom-right-radius: 20;
+}
+
+#info_stacked_widget {
+    background-color: transparent;
+    border: 2px solid rgb(40, 40, 42);
+    border-radius: 15;
+}
+#info_stacked_widget_items QLabel{
+    font-size: 20px;
+}
+#info_stacked_widget_button {
+    background-color: transparent;
+    border: none;
+}
+
+#textbox {
+    background-color: rgb(16, 16, 16);
+    color: rgb(173, 173, 173);
+    border-radius: 15;
+    border: 2px solid rgb(30, 30, 32);
+    font-size: 17px;
+    font-family: "Arial";
+    letter-spacing: 1px;
+
+    selection-background-color: rgb(30, 30, 30);
+    selection-color: rgb(200, 200, 200);
+}
+
+#label {
+    background-color: transparent;
+    color: rgb(217, 217, 217);
+    font-size: 25px;
+}
+
+#scroll_widget_item #title {
+    background-color: transparent;
+    color: rgb(217, 217, 217);
+    font-size: 40px;
+
+}
+#scroll_widget_item #title[underline="true"] {
+    background-color: transparent;
+    color: rgb(217, 217, 217);
+    font-size: 40px;
+    border-bottom: 2px solid rgb(36, 36, 38)
+}
+
+#control_widget_background {
+    background-color: rgb(28,28,30);
+    border-radius: 20;
+}
+
+#switch_menu_item:disabled {
+    color: rgb(55, 55, 55);
+}
+
+#label:disabled, #scroll_widget_item #title:disabled {
+    color: rgb(85, 85, 85);
+}
+
+#custom_button:disabled {
+    color: rgb(89, 89, 89);
+}
+
+#stacked_widget_button:disabled {
+    color: rgb(77, 77, 77);
+}
