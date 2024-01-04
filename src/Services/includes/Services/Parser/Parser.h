@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-
+namespace services {
 namespace Parser {
 
 typedef struct point_3d {
@@ -19,9 +19,8 @@ typedef struct facet {
   int size;
 } facet_t;
 
-class Parser {
- public:
-  static vertex_t parseVertex(const std::string& line);
-  static facet_t parseFacet(const std::string& line, size_t numberOfVertices);
-};
+vertex_t&& parseVertex(const std::string& line);
+facet_t&& parseFacet(const std::string& line, size_t numberOfVertices);
+
 }  // namespace Parser
+}  // namespace services

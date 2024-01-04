@@ -1,64 +1,62 @@
 #include <DTO/Edge.h>
+#include <Services/Parser/Parser.h>
 #include <Services/SceneFileOBJReader.h>
 
 #include <vector>
 
-extern "C" {
-#include <Services/PureParser/Parser.h>
-}
-
 namespace services {
 void SceneFileOBJReader::getVerticesAndFacetsFromFile(
-    std::ifstream& file, std::vector<vertex_c>& vertices,
-    std::vector<facet_c>& facets) {
-
-
+    std::ifstream& file, std::vector<Parser::vertex_t>& vertices,
+    std::vector<Parser::facet_t>& facets) {
   std::string line;
   while (std::getline(file, line)) {
     if (std::regex_match(line, vertexRegex_)) {
-      vertices.push_back(line);
+      vertices.push_back(std::move(Parser::parseVertex(line)));
     } else if (std::regex_match(line, facetRegex_)) {
-      facets.push_back(line);
+      facets.push_back(std::move(Parser::parseFacet(line, vertices.size())));
     }
   }
+}
 
-  file.close();
+std::vector<dto::Point3D>&& SceneFileOBJReader::convertToDtoPoints(
+    std::vector<Parser::vertex_t>& vertices) {
+  std::vector<dto::Point3D> points;
+  for (auto& vertex : vertices) {
+    points.push_back({vertex.point.x, vertex.point.y, vertex.point.z});
+  }
+  return std::move(points);
+}
+
+std::vector<dto::Edge>&& SceneFileOBJReader::convertToDtoEdges(
+    std::vector<Parser::facet_t>& facets) {
+  std::vector<dto::Edge> edges;
+  for (auto& facet : facets) {
+    dto::Edge edge;
+    for (auto& number : facet.numbersOfVertices) {
+      edge.v_coord.push_back(number);
+    }
+    edges.push_back(std::move(edge));
+  }
+  return std::move(edges);
 }
 
 SceneFileData SceneFileOBJReader::read(const std::string& filename) {
   SceneFileData sceneFileData;
 
-  std::vector<vertex_c> vertices;
-  std::vector<facet_c> facets;
+  std::vector<Parser::vertex_t> vertices;
+  std::vector<Parser::facet_t> facets;
 
-  Vector* vertexes = create_vector(vertex_c);
-  Vector* facets = create_vector(facet_c);
-
-  FILE* file = fopen(filename.c_str(), "r");
-  readFile(file, vertexes, facets);
-  fclose(file);
-
-  for (int i = 0; i < vertexes->size; ++i) {
-    auto point = static_cast<vertex_c*>(get_by_index(vertexes, i))->point;
-    sceneFileData.v_coord.push_back({point.x, point.y, point.z});
+  auto file = std::ifstream(filename);
+  if (!file.is_open()) {
+    throw std::runtime_error("File not found: " + filename);
   }
 
-  for (int i = 0; i < facets->size; ++i) {
-    dto::Edge edge;
+  getVerticesAndFacetsFromFile(file, vertices, facets);
 
-    facet_c* facet = static_cast<facet_c*>(get_by_index(facets, i));
-    for (int j = 0; j < facet->size; ++j) {
-      edge.v_coord.push_back(facet->number_of_vertecies[j]);
-    }
+  file.close();
 
-    sceneFileData.faces.push_back(edge);
-  }
-
-  clear(vertexes);
-  for (int i = 0; i < facets->size; ++i) {
-    free((static_cast<facet_c*>(get_by_index(facets, i)))->number_of_vertecies);
-  }
-  clear(facets);
+  sceneFileData.v_coord = std::move(convertToDtoPoints(vertices));
+  sceneFileData.faces = std::move(convertToDtoEdges(facets));
 
   return sceneFileData;
 }
