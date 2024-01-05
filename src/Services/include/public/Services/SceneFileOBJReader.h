@@ -24,8 +24,8 @@ class SceneFileOBJReader : public ISceneFileReader {
 
   private:
 
-  std::vector<dto::Point3D> convertToDtoPoints(std::vector<Parser::vertex_t> &vertices);
-  std::vector<dto::Edge> convertToDtoEdges(std::vector<Parser::facet_t> &facets);
+  std::vector<dto::Point3D>&& convertToDtoPoints(std::vector<Parser::vertex_t> &vertices);
+  std::vector<dto::Edge>&& convertToDtoEdges(std::vector<Parser::facet_t> &facets);
 
   void getVerticesAndFacetsFromFile(std::ifstream &file, std::vector<Parser::vertex_t> &vertices, std::vector<Parser::facet_t> &facets);
 

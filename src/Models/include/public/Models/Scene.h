@@ -1,10 +1,9 @@
 #pragma once
 #include <vector>
 
-#include "Models/SceneSettings.h"
-#include "SceneObject/SceneObject.h"
-#include "SceneSettings.h"
-#include "TransformableObject.h"
+#include <Models/SceneObject/SceneObject.h>
+#include <Models/SceneSettings.h>
+#include <Models/TransformableObject.h>
 
 namespace models {
 

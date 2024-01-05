@@ -6,12 +6,6 @@ project("Controllers"
     DESCRIPTION "Controllers for 3DViewer"
 )
 
-if (NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    message(STATUS "This project has a top-level one called [${CMAKE_PROJECT_NAME}]")
-else()
-    message(STATUS "This project is a top-level one")
-endif()
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -23,30 +17,31 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_library(${PROJECT_NAME} STATIC)
 
-file(GLOB_RECURSE sources_file
-        src/*.cpp)
 
-file(GLOB_RECURSE public_headers
-        includes/*.h)
+file(GLOB_RECURSE LIB_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
+
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-      ${sources_file}
+        ${LIB_SOURCES}
 )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-        # where the library itself will look for its internal headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/includes/${PROJECT_NAME}
+    # Список директорий, в который библиотека будет искать свои внутренние заголовки
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/private
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/public
     PUBLIC
-        # where top-level project will look for the library's public headers
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes>
-        # where external projects will look for the library's public headers
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    # где другие проекты будут видеть библиотеки
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/public>
+    # где внешние проекты будут искать публичные заголовки библиотеки
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-
 
 # not for MSVC
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -54,6 +49,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     # treat warnings as errors
     target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
 endif()
+
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC

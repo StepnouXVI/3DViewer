@@ -1,7 +1,7 @@
 #pragma once
 
-#include "DTO/TransformMatrix.h"
-#include "ISceneDrawer.h"
+#include <DTO/TransformMatrix.h>
+#include <Models/ISceneDrawer.h>
 
 namespace models {
 

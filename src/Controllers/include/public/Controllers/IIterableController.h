@@ -1,7 +1,7 @@
 #pragma once
 #include <Models/SceneObject/SceneObject.h>
 
-#include "TransformableController.h"
+#include <Controllers/TransformableController.h>
 
 namespace controllers {
 

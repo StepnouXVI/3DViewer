@@ -1,5 +1,5 @@
 
-#include "SceneObject/Model.h"
+#include <Models/SceneObject/Model.h>
 
 #include <stdexcept>
 

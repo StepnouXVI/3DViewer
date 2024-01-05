@@ -6,75 +6,41 @@ project("Services"
     DESCRIPTION "Services for 3DViewer"
 )
 
-if (NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    message(STATUS "This project has a top-level one called [${CMAKE_PROJECT_NAME}]")
-else()
-    message(STATUS "This project is a top-level one")
-endif()
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# set(CMAKE_PREFIX_PATH "../installs/Models")
-#set(Models_DIR "../installs/Models/cmake")
-
-#find_package(Models 0.1.1 CONFIG REQUIRED)
-find_package(Qt6 COMPONENTS Core REQUIRED)
-
-qt6_add_resources(RESOURCE_FILES ../resources.qrc)
+add_library(${PROJECT_NAME} STATIC)
 
 
-add_library(${PROJECT_NAME} STATIC
-        src/OpenGL/SceneObjectOpenGLFactory.cpp
-        src/OpenGL/SceneObjectOpenGL.cpp
-        includes/Services/OpenGL/ShaderDrawer.h
-        src/OpenGL/ShaderDrawer.cpp ${RESOURCE_FILES})
+file(GLOB_RECURSE LIB_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
 
-file(GLOB sources_file
-            "src/*.cpp"
-            "src/*.c"
-)
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        ${sources_file}
-)
-
-target_link_libraries(${PROJECT_NAME}
-        PUBLIC
-        Models
-        pcre
-        ${QT_PREFIXED_MODULES}
-        Qt6::Core
+        ${LIB_SOURCES}
 )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-        # where the library itself will look for its internal headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/includes
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    # Список директорий, в который библиотека будет искать свои внутренние заголовки
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/private
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/public
     PUBLIC
-        # where top-level project will look for the library's public headers
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes>
-        # where external projects will look for the library's public headers
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    # где другие проекты будут видеть библиотеки
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/public>
+    # где внешние проекты будут искать публичные заголовки библиотеки
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 
-# without it public headers won't get installed
-file(GLOB_RECURSE public_headers
-        includes/*.h
-)
 
-file(GLOB_RECURSE sources_file
-        src/*.cpp
-        src/*.c
-)
+find_package(Qt6 COMPONENTS Core REQUIRED)
 
-
-target_sources(${PROJECT_NAME}
-    PRIVATE
-    ${sources_file}
+target_link_libraries(${PROJECT_NAME}
+        PUBLIC
+        Models
+        ${QT_PREFIXED_MODULES}
+        Qt6::Core
 )
 
 # not for MSVC
@@ -84,7 +50,3 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
 endif()
 
-# where to find our CMake modules
-#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-#message(STATUS "CMake module path: ${CMAKE_MODULE_PATH}")
-#include(Installing)

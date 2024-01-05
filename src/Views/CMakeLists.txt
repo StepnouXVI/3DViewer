@@ -7,63 +7,45 @@ project("Views"
 )
 
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+add_library(${PROJECT_NAME} STATIC)
+
+file(GLOB_RECURSE LIB_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
+
+
+target_sources(${PROJECT_NAME}
+    PRIVATE
+        ${LIB_SOURCES}
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    # Список директорий, в который библиотека будет искать свои внутренние заголовки
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/private
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/public
+    PUBLIC
+    # где другие проекты будут видеть библиотеки
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/public>
+    # где внешние проекты будут искать публичные заголовки библиотеки
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+
+
+
 list(APPEND QT_MODULES Core Gui Widgets OpenGL OpenGLWidgets)
 find_package(Qt6 COMPONENTS ${QT_MODULES} REQUIRED)
 find_package(OpenGL REQUIRED)
 
 set(QT_PREFIXED_MODULES ${QT_MODULES})
 list(TRANSFORM QT_PREFIXED_MODULES PREPEND "Qt6::")
-
-if (NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    message(STATUS "This project has a top-level one called [${CMAKE_PROJECT_NAME}]")
-else()
-    message(STATUS "This project is a top-level one")
-endif()
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-
-
-add_library(${PROJECT_NAME} STATIC)
-
-
-# file(GLOB public_headers "includes/*.h")
-
-
-file(GLOB_RECURSE sources_file
-        "src/*.cpp"
-        "includes/*.cpp"
-        "includes/*.h"
-        "includes/*.h"
-)
-
-file(GLOB_RECURSE public_headers
-        "includes/*.h"
-)
-
-target_sources(${PROJECT_NAME}
- PRIVATE
-     ${sources_file})
-
-
-target_include_directories(${PROJECT_NAME}
-    PRIVATE
-        # where the library itself will look for its internal headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/includes
-    PUBLIC
-        # where top-level project will look for the library's public headers
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes>
-        # where external projects will look for the library's public headers
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-    target_compile_options(${PROJECT_NAME} PRIVATE)
-endif()
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC
@@ -72,3 +54,10 @@ target_link_libraries(${PROJECT_NAME}
         Controllers
         ${QT_PREFIXED_MODULES}
 )
+
+# not for MSVC
+if(CMAKE_COMPILER_IS_GNUCXX)
+    # compile options for this target only
+    # treat warnings as errors
+    target_compile_options(${PROJECT_NAME} PRIVATE -Werror)
+endif()
