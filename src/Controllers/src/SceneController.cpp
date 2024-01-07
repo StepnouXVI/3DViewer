@@ -1,4 +1,4 @@
-#include <SceneController.h>
+#include <Controllers/SceneController.h>
 #include <Services/SceneFileOBJReader.h>
 
 #include <stdexcept>

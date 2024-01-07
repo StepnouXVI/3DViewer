@@ -2,18 +2,20 @@
 
 #include <algorithm>
 #include <sstream>
+namespace services {
+
 
 namespace Parser {
 
-vertex_t&& parseVertex(const std::string& line) {
+vertex_t parseVertex(const std::string& line) {
   vertex_t vertex = {};
   std::istringstream iss(line);
   std::string v;
   iss >> v >> vertex.point.x >> vertex.point.y >> vertex.point.z;
-  return std::move(vertex);
+  return vertex;
 }
 
-facet_t&& parseFacet(const std::string& line, size_t numberOfVertices) {
+facet_t parseFacet(const std::string& line, size_t numberOfVertices) {
   facet_t facet = {};
   std::istringstream iss(line.substr(2));
 
@@ -30,6 +32,7 @@ facet_t&& parseFacet(const std::string& line, size_t numberOfVertices) {
     }
   }
 
-  return std::move(facet);
+  return facet;
 }
 }  // namespace Parser
+} // namespace services

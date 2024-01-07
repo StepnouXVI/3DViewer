@@ -1,6 +1,7 @@
 #include <DTO/Edge.h>
-#include <Services/Parser/Parser.h>
+
 #include <Services/SceneFileOBJReader.h>
+#include <Services/Parser/Parser.h>
 
 #include <vector>
 
@@ -18,16 +19,16 @@ void SceneFileOBJReader::getVerticesAndFacetsFromFile(
   }
 }
 
-std::vector<dto::Point3D>&& SceneFileOBJReader::convertToDtoPoints(
+std::vector<dto::Point3D> SceneFileOBJReader::convertToDtoPoints(
     std::vector<Parser::vertex_t>& vertices) {
   std::vector<dto::Point3D> points;
   for (auto& vertex : vertices) {
     points.push_back({vertex.point.x, vertex.point.y, vertex.point.z});
   }
-  return std::move(points);
+  return points;
 }
 
-std::vector<dto::Edge>&& SceneFileOBJReader::convertToDtoEdges(
+std::vector<dto::Edge> SceneFileOBJReader::convertToDtoEdges(
     std::vector<Parser::facet_t>& facets) {
   std::vector<dto::Edge> edges;
   for (auto& facet : facets) {
@@ -37,7 +38,7 @@ std::vector<dto::Edge>&& SceneFileOBJReader::convertToDtoEdges(
     }
     edges.push_back(std::move(edge));
   }
-  return std::move(edges);
+  return edges;
 }
 
 SceneFileData SceneFileOBJReader::read(const std::string& filename) {

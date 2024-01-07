@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 
+set(namespace "3DViewer")
 project("3DViewer"
     VERSION 0.9.1
-    DESCRIPTION "A project with nested library"
+    DESCRIPTION "3DViewer application" 
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CmakeModules)
-
-# add_subdirectory(Tests)
 
 
 set(CMAKE_CXX_STANDARD 20)
@@ -69,5 +68,10 @@ target_link_libraries(${PROJECT_NAME}
     Models
     Services
     Controllers
-    pcre
 )
+
+add_subdirectory(third-party)
+
+enable_testing()
+
+add_subdirectory(Tests)

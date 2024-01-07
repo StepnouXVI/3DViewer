@@ -31,4 +31,4 @@ void Composite::addWidget(QWidget *widget) {
 }
 
 bool Composite::isComposite() const { return true; }
-QWidget *Composite::getWidget() const {}
+QWidget *Composite::getWidget() const { return nullptr;}

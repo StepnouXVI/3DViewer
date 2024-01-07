@@ -1,5 +1,6 @@
 #pragma once
 #include <Services/ISceneFileReader.h>
+#include <Services/Parser/Parser.h>
 #include <regex>
 
 namespace services {
@@ -9,11 +10,6 @@ constexpr char VERTEX_REGEX[] = R"(^[vV](\s+[-+]?\d+(([.]\d+)?|([eE][-+]?\d+))){
 constexpr char FACET_REGEX[] = R"(^[f]([ ]([-]?)[0-9]{1,}([/])?(([-]?)[0-9]{1,})?([/])?(([-]?)[0-9]{1,})?){2,}(\s)*$)";
 }  // namespace consts
 
-namespace Parser
-{
-  struct vertex_t;
-  struct facet_t;
-} // namespace Parser
 class SceneFileOBJReader : public ISceneFileReader {
  private:
   std::string typename_ = "obj";
@@ -24,8 +20,8 @@ class SceneFileOBJReader : public ISceneFileReader {
 
   private:
 
-  std::vector<dto::Point3D>&& convertToDtoPoints(std::vector<Parser::vertex_t> &vertices);
-  std::vector<dto::Edge>&& convertToDtoEdges(std::vector<Parser::facet_t> &facets);
+  std::vector<dto::Point3D> convertToDtoPoints(std::vector<Parser::vertex_t> &vertices);
+  std::vector<dto::Edge> convertToDtoEdges(std::vector<Parser::facet_t> &facets);
 
   void getVerticesAndFacetsFromFile(std::ifstream &file, std::vector<Parser::vertex_t> &vertices, std::vector<Parser::facet_t> &facets);
 

@@ -18,11 +18,13 @@ set(CMAKE_AUTORCC ON)
 add_library(${PROJECT_NAME} STATIC)
 
 file(GLOB_RECURSE LIB_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
+file(GLOB_RECURSE LIB_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "include/*.h")
 
 
 target_sources(${PROJECT_NAME}
     PRIVATE
         ${LIB_SOURCES}
+        ${LIB_HEADERS}
 )
 
 target_include_directories(${PROJECT_NAME}

@@ -1,4 +1,4 @@
-#include <SceneObjectController.h>
+#include <Controllers/SceneObjectController.h>
 
 #include <stdexcept>
 

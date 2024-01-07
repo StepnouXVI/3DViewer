@@ -7,7 +7,7 @@
 #include <QMatrix4x4>
 #include <QOpenGLBuffer>
 #include <QOpenGLContext>
-#include <QOpenGLFunctions>
+#include <QOpenGLFunctions_4_1_Core>
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLWidget>
@@ -15,7 +15,7 @@
 #include <QPainter>
 
 class CustomQOpenGLWidget : public QOpenGLWidget,
-                            protected QOpenGLFunctions,
+                            protected QOpenGLFunctions_4_1_Core,
                             public models::ISceneDrawer {
   Q_OBJECT
 

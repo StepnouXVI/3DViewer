@@ -7,66 +7,33 @@ project("Tests"
 )
 
 
-if (NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    message(STATUS "This project has a top-level one called [${CMAKE_PROJECT_NAME}]")
-else()
-    message(STATUS "This project is a top-level one")
-endif()
+file(GLOB_RECURSE APP_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-
-file(GLOB_RECURSE sources_file
-        "src/*.c"
-)
-
-find_package(Check)
-
-
-if(Check_FOUND)
-    add_executable(${PROJECT_NAME} ${sources_file})
-    target_link_libraries(${PROJECT_NAME}
-            PUBLIC
-            Services
-            ${CHECK_LIBRARIES}
-    )
-endif()
-message(${CMAKE_C_COMPILER_ID})
-if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-    include(CodeCoverage)
-    append_coverage_compiler_flags_to_target(${PROJECT_NAME})
-#    append_coverage_compiler_flags_to_target(
-#            Services
-#            Models
-#    )
-    setup_target_for_coverage_lcov(
-            NAME test_coverage
-            EXECUTABLE  ${PROJECT_NAME}
-            DEPENDENCIES ${PROJECT_NAME}
-#            EXCLUDE "*settings*"
-    )
-endif()
-
-
-
-file(GLOB_RECURSE public_headers
-        "includes/*.h"
-)
-
+add_executable(${PROJECT_NAME} ${APP_SOURCES})
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-        # where the library itself will look for its internal headers
-        ${CMAKE_CURRENT_SOURCE_DIR}/includes
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     PUBLIC
-        # where top-level project will look for the library's public headers
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/includes>
-        # where external projects will look for the library's public headers
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    target_compile_options(${PROJECT_NAME} PRIVATE)
-endif()
+
+include(FetchContent)
+
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        release-1.11.0
+)
+FetchContent_MakeAvailable(googletest)
+add_library(GTest::GTest INTERFACE IMPORTED)
+target_link_libraries(GTest::GTest INTERFACE gtest_main)
+
+
+target_link_libraries(${PROJECT_NAME} Services GTest::GTest)
+
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+
 
 
