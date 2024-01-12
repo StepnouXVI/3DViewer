@@ -74,7 +74,7 @@ ScrollWidget* Builder::getScrollWidget(Component* widget) {
 }
 
 OpenGLWidget* Builder::getOpenGLWidget(Component* parent) {
-  OpenGLWidget* component = new OpenGLWidget(parent);
+  static OpenGLWidget* component = new OpenGLWidget(parent);
 
   return component;
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Models/SceneSettings.h>
 #include <Views/Components/BaseComponents/InfoStackedWidget.h>
 #include <Views/Components/Builder/Builder.h>
 #include <Views/Components/Composite/Composite.h>
@@ -117,11 +118,20 @@ class SceneMenu : public IMenu {
     colorDialog->show();
   }
 
-  void setEdgeColor(const QColor& color) {}
+  void setEdgeColor(const QColor& color) {
+    models::SceneSettings::getInstance().edgeSettings_.color =
+        dto::Color(color.redF(), color.greenF(), color.blueF(), color.alphaF());
+  }
 
-  void setVertexColor(const QColor& color) {}
+  void setVertexColor(const QColor& color) {
+    models::SceneSettings::getInstance().vertexSettings_.color =
+        dto::Color(color.redF(), color.greenF(), color.blueF(), color.alphaF());
+  }
 
-  void setBackgroundColor(const QColor& color) {}
+  void setBackgroundColor(const QColor& color) {
+    models::SceneSettings::getInstance().floorSettings_.color =
+        dto::Color(color.redF(), color.greenF(), color.blueF(), color.alphaF());
+  }
 
   void lockUnimplementedComponents() {
     ui.objectsDisplayTypeLabel->setEnabled(false);

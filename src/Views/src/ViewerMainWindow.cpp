@@ -1,9 +1,13 @@
 #include <Views/ViewerMainWindow.h>
 #include <Views/lib/AnchorLayout/AnchorLayout.h>
+#include <Views/Components/Builder/Builder.h>
 
 #include <QOpenGLContext>
 
-ViewerMainWindow::ViewerMainWindow() : Composite() {
+ViewerMainWindow::ViewerMainWindow(models::ISceneDrawerPtr drawer) : Composite() {
+  drawer_ = drawer;
+  drawer_ = Builder::getOpenGLWidget(this)->getWidget()->getShared();
+  
   setFixedSize(1920, 1080);
 
   Composite *openGLComposite = new Composite(this);
@@ -20,15 +24,6 @@ ViewerMainWindow::ViewerMainWindow() : Composite() {
   menu->getMenu()->fill(menuComposite);
   menu->getControlMenu()->fill(controlMenuComposite);
 
-  // auto context = menu->getOpenGLWidget()->getWidget()->context();
-  // auto sharedContext = context->shareContext();
-  auto OpenGLDrawer = menu->getOpenGLWidget()->getWidget();
-
-  /*
-   * DI.
-   * @todo Replace on boost DI
-   */
-  drawer_ = OpenGLDrawer->getShared();
 
   AnchorLayout *containerLayout = AnchorLayout::get(this);
 

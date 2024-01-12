@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   styleFile.open(QFile::ReadOnly);
   QString style(styleFile.readAll());
 
-  ViewerMainWindow mainWindow;
+  ViewerMainWindow mainWindow(nullptr);
   mainWindow.setStyleSheet(style);
 
   mainWindow.style()->unpolish(&mainWindow);
@@ -28,6 +28,9 @@ int main(int argc, char *argv[]) {
   mainWindow.update();
 
   mainWindow.show();
+
+  app.setStyle("fusion");
+  app.setWindowIcon(QIcon(":/Views/resources/Icons/icon.png"));
 
   return app.exec();
 }

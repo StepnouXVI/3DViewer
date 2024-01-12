@@ -57,10 +57,6 @@ void CustomQOpenGLWidget::paintGL() {
     drawEdges(*currentObject);
   }
   drawFaces(*currentObject);
-
-  // static float time = 0;
-  // time = (time < 1) ? time + 0.01f : time - 1;
-  // glClearColor(time, time, time, 1.0f);
 }
 
 static QVector4D color_from_settings(const dto::Color &color) {
@@ -242,7 +238,6 @@ std::shared_ptr<models::ISceneDrawer> CustomQOpenGLWidget::getShared() {
 
 void CustomQOpenGLWidget::draw(models::TransformableObject &obj) {
   currentObject = &(Object &)obj;
-  paintGL();
   update();
 
   // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -259,10 +254,3 @@ void CustomQOpenGLWidget::draw(models::TransformableObject &obj) {
   // }
   // drawFaces(glObj);
 }
-
-// void CustomQOpenGLWidget::setAttributesWithoutTexture(ShaderProgram &program)
-// {
-//   int vertLoc = program.attributeLocation("position");
-//   program.enableAttributeArray(vertLoc);
-//   program.setAttributeArray(vertLoc, GL_FLOAT, 0, 3, sizeof(QVector3D));
-// };

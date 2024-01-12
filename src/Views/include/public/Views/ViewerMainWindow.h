@@ -20,5 +20,5 @@ class ViewerMainWindow : public Composite {
   controllers::SceneObjectControllerPtr object_;
 
  public:
-  ViewerMainWindow();
+  ViewerMainWindow(models::ISceneDrawerPtr drawer);
 };
