@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${default}",
+                "D:/SDKs/C++/6.7.0/llvm-mingw_64/include/**",
+                "${workspaceFolder}/include/private"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "D:\\SDKs\\C++\\Tools\\llvm-mingw1706_64\\bin\\gcc.exe",
+            "cStandard": "c17",
+            "intelliSenseMode": "windows-clang-x64"
+        }
+    ],
+    "version": 4
+}
