@@ -84,6 +84,8 @@
         "algorithm": "cpp",
         "qopenglshader": "cpp",
         "scenedrawer.h": "c",
-        "qopenglfunctions_4_1_core": "cpp"
+        "qopenglfunctions_4_1_core": "cpp",
+        "qopenglfunctions": "cpp",
+        "qmatrix4x4": "cpp"
     }
 }

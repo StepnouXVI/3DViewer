@@ -21,6 +21,8 @@ list(TRANSFORM QT_PREFIXED_MODULES PREPEND "Qt${QT_VERSION_MAJOR}::")
 
 file(GLOB_RECURSE LIB_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "src/*.cpp")
 file(GLOB_RECURSE LIB_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "include/*.h")
+file(GLOB_RECURSE SHADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "shaders/*.glsl")
+
 
 set(PROJECT_SOURCES 
 ${LIB_SOURCES}
@@ -50,6 +52,16 @@ else()
         )
     endif()
 endif()
+
+
+
+
+qt_add_resources(3DViewer "shaders"
+    PREFIX
+        "/"
+    FILES
+        ${SHADERS}
+)
 
 target_link_libraries(3DViewer PRIVATE ${QT_PREFIXED_MODULES})
 if(WIN32)

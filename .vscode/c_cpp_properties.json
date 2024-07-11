@@ -14,7 +14,8 @@
             ],
             "compilerPath": "D:\\SDKs\\C++\\Tools\\llvm-mingw1706_64\\bin\\gcc.exe",
             "cStandard": "c17",
-            "intelliSenseMode": "windows-clang-x64"
+            "intelliSenseMode": "windows-clang-x64",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

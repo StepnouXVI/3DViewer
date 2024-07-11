@@ -1,32 +1,71 @@
 #pragma once
 
-#include <QOpenGLWidget>
-#include <QMatrix4x4>
+#include <Core/SceneSettings.h>
+#include <Core/SceneObjectOpenGL.h>
 
-#include <QOpenGLFunctions>
-
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions>
 #include <QMatrix4x4>
-#include <QQuaternion>
-#include <QVector2D>
-#include <QBasicTimer>
+#include <QOpenGLBuffer>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions_4_1_Core>
+#include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
-#include <QOpenGLTexture>
+#include <QOpenGLWidget>
+#include <QPaintEvent>
+#include <QPainter>
 
+class CustomQOpenGLWidget : public QOpenGLWidget,
+                            protected QOpenGLFunctions_4_1_Core
+                            {
+  Q_OBJECT
 
-class SceneDrawer : public QOpenGLWidget
-{
-    Q_OBJECT
+ public:
+  CustomQOpenGLWidget(QWidget *parent = nullptr);
 
-    private:
-    QMatrix4x4 _view;
-    QMatrix4x4 _projection; 
-    protected:
-    void initializeGL() override;
-    void paintGL() override;
-    void resizeGL(int w, int h) override;
-    public:
-    SceneDrawer(QWidget* parent = nullptr);
-    ~SceneDrawer();
+  void initializeGL() override;
+  void resizeGL(int width, int height) override;
+  void paintGL() override;
+
+  void draw(SceneObject&);
+
+ public:
+  using Buffer = QOpenGLBuffer;
+  using ShaderProgram = QOpenGLShaderProgram;
+  using Matrix = QMatrix4x4;
+  using Object = SceneObject;
+
+ private:
+  Object *currentObject = new SceneObject();
+  QVector2D resolution_;
+
+  Matrix view_;
+  Matrix projection_;
+  double aspectRatio_ = 16.0 / 9.0;
+
+  // @todo Remove it
+  const models::SceneSettings &settings_ = models::SceneSettings::getInstance();
+  ShaderProgram edgeProgram_;
+  ShaderProgram dottedEdgesProgram_;
+  ShaderProgram faceProgram_;
+  ShaderProgram faceWithTextureProgram_;
+  ShaderProgram skyBoxProgram_;
+  ShaderProgram vertexProgram_;
+
+  void AddShaderFromString(QOpenGLShaderProgram &program,
+                           QOpenGLShader::ShaderTypeBit type,
+                           const QString &shader);
+  void AddShader(ShaderProgram &program, QOpenGLShader::ShaderTypeBit type,
+                 const QString &shaderPath);
+  void AddShader(ShaderProgram &program, const QString &vertex,
+                 const QString &frag);
+  void AddShader(ShaderProgram &program, const QString &vertex,
+                 const QString &geom, const QString &frag);
+  void LoadShaders();
+
+  void setProjection();
+  void setAttributesWithoutTexture(ShaderProgram &program);
+  void setMVP(ShaderProgram &program, Object &obj);
+  void drawFaces(Object &obj);
+  void drawEdges(Object &obj);
+  void drawDottedEdges(Object &obj);
+  void drawVertex(Object &obj);
 };

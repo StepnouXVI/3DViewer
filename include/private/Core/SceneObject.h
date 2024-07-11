@@ -16,7 +16,5 @@ class SceneObject
     SceneObject(const QMatrix4x4& model, const std::vector<float>& vertices, const std::vector<unsigned int>& indices);
     QMatrix4x4 model() const;
     void setModel(const QMatrix4x4& model);
-
-    void Draw(SceneDrawer& drawer) const;
 };
 
