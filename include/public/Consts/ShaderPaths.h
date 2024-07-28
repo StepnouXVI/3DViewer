@@ -30,3 +30,6 @@
 #define VERTEX_FRAG_SHADER ":shaders/vertexes/frag.glsl"
 #define VERTEX_VERT_SHADER ":shaders/vertexes/vert.glsl"
 #define VERTEX_GEOM_SHADER ":shaders/vertexes/geom.glsl"
+
+#define FLOOR_FRAG_SHADER ":shaders/floor/frag.glsl"
+#define FLOOR_VERT_SHADER ":shaders/floor/vert.glsl"

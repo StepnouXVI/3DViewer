@@ -31,6 +31,8 @@
         "OperationSet": "cpp",
         "BinaryOperation": "cpp",
         "SceneObject": "cpp",
+        "qpainter": "cpp",
+        "qopenglshader": "cpp",
         "__bit_reference": "cpp",
         "__config": "cpp",
         "__hash_table": "cpp",
@@ -58,6 +60,7 @@
         "execution": "cpp",
         "future": "cpp",
         "initializer_list": "cpp",
+        "iomanip": "cpp",
         "ios": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",
@@ -81,11 +84,6 @@
         "unordered_map": "cpp",
         "variant": "cpp",
         "vector": "cpp",
-        "algorithm": "cpp",
-        "qopenglshader": "cpp",
-        "scenedrawer.h": "c",
-        "qopenglfunctions_4_1_core": "cpp",
-        "qopenglfunctions": "cpp",
-        "qmatrix4x4": "cpp"
+        "algorithm": "cpp"
     }
 }
